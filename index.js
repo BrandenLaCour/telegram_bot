@@ -1,3 +1,6 @@
+/*
+  Jacob Waller - 2018
+*/
 const Telegraf = require("telegraf");
 const request = require("request");
 const cheerio = require("cheerio");
@@ -10,22 +13,33 @@ const { Markup } = require("telegraf");
 
 require("dotenv").config();
 
+
+//These are individual tokens used throughout the code for API's.
+//You would need to define these environment variables
 let BOT_TOKEN = process.env.BOT_TOKEN;
 let DARKSKY_TOKEN = process.env.DARKSKY_TOKEN;
 let OPENWEATHER_TOKEN = process.env.OPENWEATHER_TOKEN;
 let GROUP_ID = process.env.GROUP_ID;
 let SECRET_COMMAND = process.env.SECRET_COMMAND;
+
+//Credentials for the SQL server
 let sql_creds = require("./sql_creds.json");
 
 const bot = new Telegraf(BOT_TOKEN, { username: "ChiSk8_bot" });
 
-//A group ride titled ${title} is on ${date}. It goes from ${start} to ${end} at ${start_time}
+//Generic Error message
 const errorMsg =
   "There was an error. Try again later. \n@jacob_waller Look at logs pls";
 
+
+//Says
+//Good morning
+//Weather
+//Whether or not a group ride is today or tomorrow
 function dailyMessage() {
   var resp = "Good morning!\n";
   bot.telegram.sendMessage(GROUP_ID, resp);
+
   //Get weather for the day
   request(
     `https://api.darksky.net/forecast/${DARKSKY_TOKEN}/41.8781,-87.6298`,
@@ -74,7 +88,7 @@ function dailyMessage() {
           bot.telegram.sendMessage(GROUP_ID, resp);
         } catch (error) {
           bot.telegram.sendMessage(
-            -281963081,
+            GROUP_ID,
             "There are no group rides today or tomorrow"
           );
         }
@@ -82,10 +96,6 @@ function dailyMessage() {
     );
   });
 }
-
-bot.command("daily", ctx => {
-  dailyMessage();
-});
 
 var s = schedule.scheduleJob("0 11 * * *", () => {
   dailyMessage();
@@ -98,22 +108,21 @@ bot.start(ctx =>
 );
 bot.help(ctx =>
   ctx.reply(
-    `Hi! I\'m here to answer some questions. If you want to add a feature, DM @jacob_waller. Also, be advised I am in the Pre-est of Alphas. Things may not work correctly \n
-
-/weather: Get current weather conditions
-/forecast: Get the forecast of the next few days
-/helmets: Get a list of links to some pretty good helmets
-/links: Get a list of helpful links for newcomers or those who are curious
-/group_ride: Gives information on the next group ride
-/charge: Gives the charging map for Chicago
-/nosedive: idk some OneWheel meme
-/bearings: shows a gif on how to remove bearings from a wheel
-/battery: shows a video on how to replace the battery on a Boosted Board 
-
-Version: 0.8`
+    "Hi! I\'m here to answer some questions. If you want to add a feature, DM @jacob_waller. Also, be advised I am in the Pre-est of Alphas. Things may not work correctly\n\n"+
+    "/weather: Get current weather conditions\n"+
+    "/forecast: Get the forecast of the next few days\n"+
+    "/helmets: Get a list of links to some pretty good helmets\n"+
+    "/links: Get a list of helpful links for newcomers or those who are curious\n"+
+    "/group_ride: Gives information on the next group ride\n"+
+    "/charge: Gives the charging map for Chicago\n"+
+    "/nosedive: idk some OneWheel meme\n"+
+    "/bearings: shows a gif on how to remove bearings from a wheel\n"+
+    "/battery: shows a video on how to replace the battery on a Boosted Board\n\n"+
+    "Version: 0.8"
   )
 );
 
+//How to replace a battery on a Boosted Board V2
 var battery_comms = [
   "battery",
   "batteries",
@@ -125,6 +134,8 @@ var battery_comms = [
 bot.command(battery_comms, ctx => {
   ctx.reply("https://www.youtube.com/watch?v=g-JsaT8N6rk");
 });
+
+//Don't worry about these next two sections of garbage. they're for voting and whatnot.
 
 //rank section
 var a = 0,
@@ -146,7 +157,7 @@ bot.command("rank", ctx => {
     c = 0;
     d = 0;
     votedRank = [];
-    ctx.telegram.sendMessage(-281963081, "Poll:", rankInline);
+    ctx.telegram.sendMessage(GROUP_ID, "Poll:", rankInline);
   } catch (error) {}
 });
 bot.command("rankresults", ctx => {
@@ -195,7 +206,7 @@ bot.command("poll", ctx => {
     yes = 0;
     no = 0;
     voted = [];
-    ctx.telegram.sendMessage(-281963081, "Poll:", pollInline);
+    ctx.telegram.sendMessage(GROUP_ID, "Poll:", pollInline);
   } catch (error) {}
 });
 bot.command("pollresults", ctx => {
@@ -222,10 +233,11 @@ bot.command(SECRET_COMMAND, ctx => {
 });
 
 bot.on("new_chat_members", ctx => {
-  var resp = `Hey! Welcome to the Chicago E-Skate Telegram. 
-For a map on places to charge, check out: https://www.google.com/maps/d/edit?mid=1KIzwP95pZD0A3CWmjC6lcMD29f4&usp=sharing
-For info on the next group ride, check out: https://www.facebook.com/groups/BoostedCHI/events
-If you want to know more about what I can do, click /help`;
+  var resp =  "Hey! Welcome to the Chicago E-Skate Telegram.\n"+
+              "For a map on places to charge, check out: https://www.google.com/maps/d/edit?mid=1KIzwP95pZD0A3CWmjC6lcMD29f4&usp=sharing\n"+
+              "For info on the next group ride, click: /group_ride\n"+
+              "For even more info, check out: https://www.facebook.com/groups/chicagoeskate/events/\n"+
+              "If you want to know more about what I can do, click /help\n";
 
   ctx.reply(resp);
 });
@@ -253,9 +265,6 @@ bot.command(rand_comms, ctx => {
 
 var group_ride_comms = ["group_ride", "groupride", "ride", "rides"];
 bot.command(group_ride_comms, ctx => {
-  /*  var resp = `TODO: literally all of this.
-Visit: https://www.facebook.com/groups/BoostedCHI/events for a current list of events`;*/
-
   var con = mysql.createConnection(sql_creds);
   con.connect(function(err) {
     if (err) throw err;
@@ -276,7 +285,7 @@ Visit: https://www.facebook.com/groups/BoostedCHI/events for a current list of e
           result[0].end;
         ctx.reply(
           resp +
-            ". For more info, go to: https://www.facebook.com/groups/BoostedCHI/events for a current list of events"
+            ". For more info, go to: https://www.facebook.com/groups/chicagoeskate/events/ for a current list of events"
         );
       }
     );
@@ -298,13 +307,11 @@ var pads_comms = [
 
 bot.command(pads_comms, ctx => {
 	ctx.reply(
-`
-https://g-form.com/
-https://www.revzilla.com/motorcycle/speed-and-strength-critical-mass-jeans
-https://www.revzilla.com/motorcycle/speed-and-strength-true-romance-womens-jeans
-https://www.amazon.com/dp/B00829IFWQ/ref=cm_sw_r_cp_apa_HBfBBbW8594ZH
-https://www.amazon.com/dp/B07735T8CC/ref=cm_sw_r_cp_apa_rCfBBbE1AF3A4
-`);
+    "https://g-form.com/\n"+
+    "https://www.revzilla.com/motorcycle/speed-and-strength-critical-mass-jeans\n"+
+    "https://www.revzilla.com/motorcycle/speed-and-strength-true-romance-womens-jeans\n"+
+    "https://www.amazon.com/dp/B00829IFWQ/ref=cm_sw_r_cp_apa_HBfBBbW8594ZH\n"+
+    "https://www.amazon.com/dp/B07735T8CC/ref=cm_sw_r_cp_apa_rCfBBbE1AF3A4");
 });
 
 var winter_comms = [
@@ -319,16 +326,14 @@ var winter_comms = [
 
 bot.command(winter_comms, ctx => {
 	ctx.reply(
-`
-https://www.revzilla.com/motorcycle/speed-and-strength-straight-savage-jacket
-https://www.revzilla.com/motorcycle/speed-and-strength-double-take-womens-jacket
-https://www.amazon.com/dp/B01H50RCY4/ref=cm_sw_r_cp_apa_LHfBBbBA59EA4
-https://www.amazon.com/dp/B01H50RDW0/ref=cm_sw_r_cp_apa_7HfBBbYREWEDV
-https://www.amazon.com/dp/B01E5PJ41G/ref=cm_sw_r_cp_apa_FIfBBb952B924
-https://www.amazon.com/dp/B075SJB7N1/ref=cm_sw_r_cp_apa_aJfBBbVQNWKG5
-https://www.revzilla.com/motorcycle/knox-hanbury-mk1-gloves
-https://www.vans.com/shop/sk8hi-mte
-`);
+    "https://www.revzilla.com/motorcycle/speed-and-strength-straight-savage-jacket\n"+
+    "https://www.revzilla.com/motorcycle/speed-and-strength-double-take-womens-jacket\n"+
+    "https://www.amazon.com/dp/B01H50RCY4/ref=cm_sw_r_cp_apa_LHfBBbBA59EA4\n"+
+    "https://www.amazon.com/dp/B01H50RDW0/ref=cm_sw_r_cp_apa_7HfBBbYREWEDV\n"+
+    "https://www.amazon.com/dp/B01E5PJ41G/ref=cm_sw_r_cp_apa_FIfBBb952B924\n"+
+    "https://www.amazon.com/dp/B075SJB7N1/ref=cm_sw_r_cp_apa_aJfBBbVQNWKG5\n"+
+    "https://www.revzilla.com/motorcycle/knox-hanbury-mk1-gloves\n"+
+    "https://www.vans.com/shop/sk8hi-mte");
 });
 
 var bearing_comms = [
@@ -359,11 +364,11 @@ bot.command(charging_comms, ctx => {
 
 var links_comms = ["helpful_links", "links", "link", "helpfullinks"];
 bot.command(links_comms, ctx => {
-  var helmetThing = `Charging Map: https://www.google.com/maps/d/edit?mid=1KIzwP95pZD0A3CWmjC6lcMD29f4&usp=sharing
-Boosted Board Riders Chicago: https://www.facebook.com/groups/BoostedCHI
-Chicago E-Skate: https://www.facebook.com/groups/chicagoeskate/
-Invite Link for Telegram: https://t.me/joinchat/GGTLCBDOaknv45USExpJSw
-Announcement Telegram: https://t.me/joinchat/AAAAAEwbHWf-hVIT53a75Q`;
+  var helmetThing = "Charging Map: https://www.google.com/maps/d/edit?mid=1KIzwP95pZD0A3CWmjC6lcMD29f4&usp=sharing\n"+
+                    "Boosted Board Riders Chicago: https://www.facebook.com/groups/BoostedCHI\n"+
+                    "Chicago E-Skate: https://www.facebook.com/groups/chicagoeskate/\n"+
+                    "Invite Link for Telegram: https://t.me/joinchat/GGTLCBDOaknv45USExpJSw\n"+
+                    "Announcement Telegram: https://t.me/joinchat/AAAAAEwbHWf-hVIT53a75Q"
 
   ctx.reply(helmetThing);
 });
@@ -375,23 +380,24 @@ var helmet_comms = [
   "brain_bucket"
 ];
 bot.command(helmet_comms, ctx => {
-  var helmetThing = `http://www.bernunlimited.com/
-https://www.explorethousand.com/
-https://www.ruroc.com/en/
-https://shop.boostedboards.com/products/boosted-helmet
-https://www.pocsports.com/us/cycling-helmets/commuter/`;
+  var helmetThing = 
+  "http://www.bernunlimited.com/\n"+
+  "https://www.explorethousand.com/\n"+
+  "https://www.ruroc.com/en/\n"+
+  "https://shop.boostedboards.com/products/boosted-helmet\n"+
+  "https://www.pocsports.com/us/cycling-helmets/commuter/";
 
   ctx.reply(helmetThing);
 });
 
 var belt_comms = ["belts", "belt"];
 bot.command(belt_comms, ctx => {
-  var resp = `
-The belts we use are 225-3M-15
-They can be purchased from: 
-https://shop.boostedboards.com/products/2nd-gen-belt-kit
-https://www.royalsupply.com/store/pc/Gates-225-3M-15-PowerGrip-HTD-Belt-9293-0395-p18067.htm
-https://www.amazon.com/JVgear-Boosted-Board-Belts-Stealth/dp/B076HKPKLF/ref=sr_1_3?ie=UTF8&qid=1530303696&sr=8-3&keywords=boosted+board+belts`;
+  var resp = 
+    "The belts we use are 225-3M-15\n"+
+    "They can be purchased from: \n"+
+    "https://shop.boostedboards.com/products/2nd-gen-belt-kit\n"+
+    "https://www.royalsupply.com/store/pc/Gates-225-3M-15-PowerGrip-HTD-Belt-9293-0395-p18067.htm\n"+
+    "https://www.amazon.com/JVgear-Boosted-Board-Belts-Stealth/dp/B076HKPKLF/ref=sr_1_3?ie=UTF8&qid=1530303696&sr=8-3&keywords=boosted+board+belts";
   ctx.reply(resp);
 });
 
