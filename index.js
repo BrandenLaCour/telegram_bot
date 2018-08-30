@@ -142,6 +142,7 @@ var battery_comms = [
 bot.command(battery_comms, ctx => {
   console.log(ctx);
   ctx.reply("https://www.youtube.com/watch?v=g-JsaT8N6rk");
+  analytics(ctx);
 });
 
 //Don't worry about these next two sections of garbage. they're for voting and whatnot.
@@ -168,6 +169,7 @@ bot.command("rank", ctx => {
     votedRank = [];
     ctx.telegram.sendMessage(GROUP_ID, "Poll:", rankInline);
   } catch (error) {}
+  analytics(ctx);
 });
 bot.command("rankresults", ctx => {
   ctx.reply(
