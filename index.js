@@ -275,7 +275,7 @@ bot.command(group_ride_comms, ctx => {
         console.log(result);
         var resp =
           "The next event is titled " +
-          result[0].title + ". It starts at "
+          result[0].title + ". It starts at " +
           result[0].start +
           " on " +
           result[0].start_date.toString().substring(0, 15) +
