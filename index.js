@@ -102,6 +102,14 @@ var s = schedule.scheduleJob("0 11 * * *", () => {
   dailyMessage();
 });
 
+//Analytics
+bot.on("message", ctx => {
+  //If the message is a command
+  if(ctx.message.text.substring(0,1) == "/") {
+    fs.appendFileSync('log.txt', ctx.message.txt);
+  } 
+})
+
 bot.start(ctx => {
   ctx.reply(
     "Hi! I'm the Chicago E-Skate bot! I can give you weather information, helmet recommendations, and helpful links! Type /help for a list of available commands."
