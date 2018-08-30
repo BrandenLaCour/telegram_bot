@@ -103,12 +103,9 @@ var s = schedule.scheduleJob("0 11 * * *", () => {
 });
 
 //Analytics
-bot.on("message", ctx => {
-  //If the message is a command
-  if(ctx.message.text.substring(0,1) == "/") {
-    fs.appendFileSync('log.txt', ctx.message.text.toString()+"\n");
-  } 
-})
+function analytics(ctx) {
+  fs.appendFileSync('log.txt', ctx.message.text.toString()+"\n");
+}
 
 bot.start(ctx => {
   ctx.reply(
@@ -176,6 +173,7 @@ bot.command("rankresults", ctx => {
   ctx.reply(
     "Here are the results:\nA: " + a + " B: " + b + "\nC: " + c + " D: " + d
   );
+  analytics(ctx);
 });
 
 bot.action("A", ctx => {
@@ -220,9 +218,11 @@ bot.command("poll", ctx => {
     voted = [];
     ctx.telegram.sendMessage(GROUP_ID, "Poll:", pollInline);
   } catch (error) {}
+  analytics(ctx);
 });
 bot.command("pollresults", ctx => {
   ctx.reply("Here are the results:\nA: " + yes + " B: " + no);
+  analytics(ctx);
 });
 bot.action("like", ctx => {
   if (!voted.includes(ctx.update.callback_query.from.id)) {
@@ -241,7 +241,8 @@ bot.action("dislike", ctx => {
 bot.command(SECRET_COMMAND, ctx => {
 	console.log(ctx.message.text);
 	ctx.reply(ctx.message.text.toString().substring(6));
-	ctx.telegram.sendMessage(GROUP_ID,ctx.message.text.toString().substring(6));
+  ctx.telegram.sendMessage(GROUP_ID,ctx.message.text.toString().substring(6));
+  analytics(ctx);
 });
 
 bot.on("new_chat_members", ctx => {
@@ -259,6 +260,7 @@ bot.command(milk_comms, ctx => {
   ctx.reply(
     "https://www.instagram.com/p/BW0r8wrlSMJ/?utm_source=ig_share_sheet&igshid=1se0j38gw1fl8"
   );
+  analytics(ctx);
 });
 
 var flashlight_comms = [
@@ -277,6 +279,7 @@ bot.command(flashlight_comms, ctx => {
               "https://www.amazon.com/dp/B01G75P1SC?ref=yo_pop_ma_swf \n"+
               "https://www.amazon.com/dp/B071DHQDLD?ref=yo_pop_ma_swf";
   ctx.reply(resp);
+  analytics(ctx);
 })
 
 var rand_comms = [
@@ -294,6 +297,7 @@ var rand_comms = [
 ];
 bot.command(rand_comms, ctx => {
   ctx.reply("Shut up Justin\nhttps://i.imgur.com/akZxbAa.jpg");
+  analytics(ctx);
 });
 
 var group_ride_comms = ["group_ride", "groupride", "ride", "rides"];
@@ -323,7 +327,7 @@ bot.command(group_ride_comms, ctx => {
       }
     );
   });
-
+  analytics(ctx);
   //ctx.reply("Something went wrong. @jacob_waller");
 });
 
@@ -345,6 +349,7 @@ bot.command(pads_comms, ctx => {
     "https://www.revzilla.com/motorcycle/speed-and-strength-true-romance-womens-jeans\n"+
     "https://www.amazon.com/dp/B00829IFWQ/ref=cm_sw_r_cp_apa_HBfBBbW8594ZH\n"+
     "https://www.amazon.com/dp/B07735T8CC/ref=cm_sw_r_cp_apa_rCfBBbE1AF3A4");
+    analytics(ctx);
 });
 
 var winter_comms = [
@@ -366,6 +371,7 @@ bot.command(winter_comms, ctx => {
     "https://www.amazon.com/dp/B075SJB7N1/ref=cm_sw_r_cp_apa_aJfBBbVQNWKG5\n"+
     "https://www.revzilla.com/motorcycle/knox-hanbury-mk1-gloves\n"+
     "https://www.vans.com/shop/sk8hi-mte");
+    analytics(ctx);
 });
 
 var bearing_comms = [
@@ -378,6 +384,7 @@ var bearing_comms = [
 ];
 bot.command(bearing_comms, ctx => {
   ctx.reply("https://www.amazon.com/dp/B01MYG7WT0/ref=cm_sw_r_cp_apa_mVdBBb5F203E4\nhttps://media.giphy.com/media/7zAgRCl0lkUSDNp6Y7/giphy.mp4");
+  analytics(ctx);
 });
 
 var charging_comms = [
@@ -392,6 +399,7 @@ bot.command(charging_comms, ctx => {
   ctx.reply(
     "https://www.google.com/maps/d/edit?mid=1KIzwP95pZD0A3CWmjC6lcMD29f4&usp=sharing"
   );
+  analytics(ctx);
 });
 
 var links_comms = ["helpful_links", "links", "link", "helpfullinks"];
@@ -403,6 +411,7 @@ bot.command(links_comms, ctx => {
                     "Announcement Telegram: https://t.me/joinchat/AAAAAEwbHWf-hVIT53a75Q"
 
   ctx.reply(helmetThing);
+  analytics(ctx);
 });
 
 var helmet_comms = [
@@ -420,6 +429,7 @@ bot.command(helmet_comms, ctx => {
   "https://www.pocsports.com/us/cycling-helmets/commuter/";
 
   ctx.reply(helmetThing);
+  analytics(ctx);
 });
 
 var belt_comms = ["belts", "belt"];
@@ -431,10 +441,12 @@ bot.command(belt_comms, ctx => {
     "https://www.royalsupply.com/store/pc/Gates-225-3M-15-PowerGrip-HTD-Belt-9293-0395-p18067.htm\n"+
     "https://www.amazon.com/JVgear-Boosted-Board-Belts-Stealth/dp/B076HKPKLF/ref=sr_1_3?ie=UTF8&qid=1530303696&sr=8-3&keywords=boosted+board+belts";
   ctx.reply(resp);
+  analytics(ctx);
 });
 
 bot.command("nosedive", ctx => {
   ctx.reply("ayy lmao\nhttps://www.youtube.com/watch?v=kc6IEVV9mp0&t=20s");
+  analytics(ctx);
 });
 
 bot.command("weather", ctx => {
@@ -488,6 +500,7 @@ bot.command("weather", ctx => {
       }
     }
   );
+  analytics(ctx);
 });
 
 bot.command("forecast", ctx => {
@@ -517,6 +530,7 @@ bot.command("forecast", ctx => {
       }
     }
   );
+  analytics(ctx);
 });
 
 bot.startPolling();
