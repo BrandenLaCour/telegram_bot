@@ -8,6 +8,7 @@ const rp = require("request-promise");
 var jsdom = require("jsdom");
 var mysql = require("mysql");
 var schedule = require("node-schedule");
+const fs = require('fs');
 
 const { Markup } = require("telegraf");
 
@@ -101,10 +102,12 @@ var s = schedule.scheduleJob("0 11 * * *", () => {
   dailyMessage();
 });
 
-bot.start(ctx =>
+bot.start(ctx => {
   ctx.reply(
     "Hi! I'm the Chicago E-Skate bot! I can give you weather information, helmet recommendations, and helpful links! Type /help for a list of available commands."
-  )
+  );
+  //fs.appendFileSync('log.txt', 'start');
+  }
 );
 bot.help(ctx =>
   ctx.reply(
@@ -132,6 +135,7 @@ var battery_comms = [
   "electron_holder"
 ];
 bot.command(battery_comms, ctx => {
+  console.log(ctx);
   ctx.reply("https://www.youtube.com/watch?v=g-JsaT8N6rk");
 });
 
@@ -249,6 +253,24 @@ bot.command(milk_comms, ctx => {
   );
 });
 
+var flashlight_comms = [
+  "flashlight",
+  "light",
+  "flash_light",
+  "torch",
+  "torch_light",
+  "flashlights",
+  "lights",
+  "torches"
+];
+bot.command(flashlight_comms, ctx => {
+  var resp =  "https://www.amazon.com/gp/product/B017XD0PX8/ref=oh_aui_search_detailpage?ie=UTF8&psc=1 \n"+
+              "https://www.amazon.com/dp/B00T8J9FGO?ref=yo_pop_ma_swf \n"+
+              "https://www.amazon.com/dp/B01G75P1SC?ref=yo_pop_ma_swf \n"+
+              "https://www.amazon.com/dp/B071DHQDLD?ref=yo_pop_ma_swf";
+  ctx.reply(resp);
+})
+
 var rand_comms = [
   "redpepper",
   "notagain",
@@ -257,7 +279,10 @@ var rand_comms = [
   "TheLodge",
   "theLodge",
   "the_lodge",
-  "Guinness"
+  "Guinness",
+  "guinness",
+  "shutup",
+  "shutup_justin"
 ];
 bot.command(rand_comms, ctx => {
   ctx.reply("Shut up Justin\nhttps://i.imgur.com/akZxbAa.jpg");
@@ -323,7 +348,6 @@ var winter_comms = [
 	"winter_gear",
 	"its_cold_as_fuck"
 ]
-
 bot.command(winter_comms, ctx => {
 	ctx.reply(
     "https://www.revzilla.com/motorcycle/speed-and-strength-straight-savage-jacket\n"+
