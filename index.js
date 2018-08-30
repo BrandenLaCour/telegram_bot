@@ -106,7 +106,7 @@ var s = schedule.scheduleJob("0 11 * * *", () => {
 bot.on("message", ctx => {
   //If the message is a command
   if(ctx.message.text.substring(0,1) == "/") {
-    fs.appendFileSync('log.txt', ctx.message.text.toString());
+    fs.appendFileSync('log.txt', ctx.message.text.toString()+"\n");
   } 
 })
 
