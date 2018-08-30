@@ -277,6 +277,7 @@ var flashlight_comms = [
 ];
 bot.command(flashlight_comms, ctx => {
   var resp =  "https://www.amazon.com/gp/product/B017XD0PX8/ref=oh_aui_search_detailpage?ie=UTF8&psc=1 \n"+
+              "https://www.amazon.com/dp/B07GX9XRK8/ref=cm_sw_r_cp_api_EIdIBbDARWTE0 \n" + 
               "https://www.amazon.com/dp/B00T8J9FGO?ref=yo_pop_ma_swf \n"+
               "https://www.amazon.com/dp/B01G75P1SC?ref=yo_pop_ma_swf \n"+
               "https://www.amazon.com/dp/B071DHQDLD?ref=yo_pop_ma_swf";
