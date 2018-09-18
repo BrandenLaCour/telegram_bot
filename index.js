@@ -257,6 +257,11 @@ bot.on("new_chat_members", ctx => {
   ctx.reply(resp);
 });
 
+var sploosh_comms = ["sploosh", "splash", "splishy_splash", "andrew_stroh_over_he_goes"];
+bot.command(sploosh_comms, ctx => {
+  ctx.reply("https://i.imgur.com/2KGVaHO.jpg");
+});
+
 var milk_comms = ["milk", "milked"];
 bot.command(milk_comms, ctx => {
   ctx.reply(
