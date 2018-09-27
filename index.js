@@ -260,6 +260,7 @@ bot.on("new_chat_members", ctx => {
 var sploosh_comms = ["sploosh", "splash", "splishy_splash", "andrew_stroh_over_he_goes"];
 bot.command(sploosh_comms, ctx => {
   ctx.reply("https://i.imgur.com/2KGVaHO.jpg");
+  analytics(ctx);
 });
 
 var milk_comms = ["milk", "milked"];
