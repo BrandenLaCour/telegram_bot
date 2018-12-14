@@ -1,22 +1,25 @@
 /*
+  
   Jacob Waller - 2018
+  jacobwaller.com
+
+  Chicago E-Skate
+
 */
 const Telegraf = require("telegraf");
 const request = require("request");
 const cheerio = require("cheerio");
 const rp = require("request-promise");
+const fs = require('fs');
 var jsdom = require("jsdom");
 var mysql = require("mysql");
 var schedule = require("node-schedule");
-const fs = require('fs');
+var basicCommands = require("./basicCommands.json");
 
 const { Markup } = require("telegraf");
 
 require("dotenv").config();
 
-
-//These are individual tokens used throughout the code for API's.
-//You would need to define these environment variables
 let BOT_TOKEN = process.env.BOT_TOKEN;
 let DARKSKY_TOKEN = process.env.DARKSKY_TOKEN;
 let OPENWEATHER_TOKEN = process.env.OPENWEATHER_TOKEN;
@@ -130,22 +133,13 @@ bot.help(ctx =>
   )
 );
 
-//How to replace a battery on a Boosted Board V2
-var battery_comms = [
-  "battery",
-  "batteries",
-  "replace_battery",
-  "replacebattery",
-  "batterys",
-  "electron_holder"
-];
-bot.command(battery_comms, ctx => {
-  console.log(ctx);
-  ctx.reply("https://www.youtube.com/watch?v=g-JsaT8N6rk");
-  analytics(ctx);
-});
-
-//Don't worry about these next two sections of garbage. they're for voting and whatnot.
+//Generic Command Section. Commands defined in basicCommands.json
+for(var i=0;i<basicCommands.length;i++) {
+  bot.command(basicCommands[i].commands, ctx => {
+    ctx.reply(basicCommands[i].response);
+    analytics(ctx);
+  })
+}
 
 //rank section
 var a = 0,
@@ -257,58 +251,6 @@ bot.on("new_chat_members", ctx => {
   ctx.reply(resp);
 });
 
-var sploosh_comms = ["sploosh", "splash", "splishy_splash", "andrew_stroh_over_he_goes"];
-bot.command(sploosh_comms, ctx => {
-  ctx.reply("https://i.imgur.com/2KGVaHO.jpg");
-  analytics(ctx);
-});
-
-var milk_comms = ["milk", "milked"];
-bot.command(milk_comms, ctx => {
-  ctx.reply(
-    "https://www.instagram.com/p/BW0r8wrlSMJ/?utm_source=ig_share_sheet&igshid=1se0j38gw1fl8"
-  );
-  analytics(ctx);
-});
-
-var flashlight_comms = [
-  "flashlight",
-  "light",
-  "flash_light",
-  "torch",
-  "torch_light",
-  "flashlights",
-  "lights",
-  "torches"
-];
-bot.command(flashlight_comms, ctx => {
-  var resp =  "https://www.amazon.com/gp/product/B017XD0PX8/ref=oh_aui_search_detailpage?ie=UTF8&psc=1 \n"+
-              "https://www.amazon.com/dp/B07GX9XRK8/ref=cm_sw_r_cp_api_EIdIBbDARWTE0 \n" + 
-              "https://www.amazon.com/dp/B00T8J9FGO?ref=yo_pop_ma_swf \n"+
-              "https://www.amazon.com/dp/B01G75P1SC?ref=yo_pop_ma_swf \n"+
-              "https://www.amazon.com/dp/B071DHQDLD?ref=yo_pop_ma_swf";
-  ctx.reply(resp);
-  analytics(ctx);
-})
-
-var rand_comms = [
-  "redpepper",
-  "notagain",
-  "lodge",
-  "thelodge",
-  "TheLodge",
-  "theLodge",
-  "the_lodge",
-  "Guinness",
-  "guinness",
-  "shutup",
-  "shutup_justin"
-];
-bot.command(rand_comms, ctx => {
-  ctx.reply("Shut up Justin\nhttps://i.imgur.com/akZxbAa.jpg");
-  analytics(ctx);
-});
-
 var group_ride_comms = ["group_ride", "groupride", "ride", "rides"];
 bot.command(group_ride_comms, ctx => {
   var con = mysql.createConnection(sql_creds);
@@ -336,125 +278,6 @@ bot.command(group_ride_comms, ctx => {
       }
     );
   });
-  analytics(ctx);
-  //ctx.reply("Something went wrong. @jacob_waller");
-});
-
-var pads_comms = [
-	"pads",
-	"owie",
-	"kneepads",
-	"elbowpads",
-	"knee_pads",
-	"elbow_pads",
-	"armor",
-	"i_dont_wanna_die"
-];
-
-bot.command(pads_comms, ctx => {
-	ctx.reply(
-    "https://g-form.com/\n"+
-    "https://www.revzilla.com/motorcycle/speed-and-strength-critical-mass-jeans\n"+
-    "https://www.revzilla.com/motorcycle/speed-and-strength-true-romance-womens-jeans\n"+
-    "https://www.amazon.com/dp/B00829IFWQ/ref=cm_sw_r_cp_apa_HBfBBbW8594ZH\n"+
-    "https://www.amazon.com/dp/B07735T8CC/ref=cm_sw_r_cp_apa_rCfBBbE1AF3A4");
-    analytics(ctx);
-});
-
-var winter_comms = [
-	"wintergear",
-	"winter",
-	"cold",
-	"its_cold_as_fuck_wtf",
-	"chilly",
-	"winter_gear",
-	"its_cold_as_fuck"
-]
-bot.command(winter_comms, ctx => {
-	ctx.reply(
-    "https://www.revzilla.com/motorcycle/speed-and-strength-straight-savage-jacket\n"+
-    "https://www.revzilla.com/motorcycle/speed-and-strength-double-take-womens-jacket\n"+
-    "https://www.amazon.com/dp/B01H50RCY4/ref=cm_sw_r_cp_apa_LHfBBbBA59EA4\n"+
-    "https://www.amazon.com/dp/B01H50RDW0/ref=cm_sw_r_cp_apa_7HfBBbYREWEDV\n"+
-    "https://www.amazon.com/dp/B01E5PJ41G/ref=cm_sw_r_cp_apa_FIfBBb952B924\n"+
-    "https://www.amazon.com/dp/B075SJB7N1/ref=cm_sw_r_cp_apa_aJfBBbVQNWKG5\n"+
-    "https://www.revzilla.com/motorcycle/knox-hanbury-mk1-gloves\n"+
-    "https://www.vans.com/shop/sk8hi-mte");
-    analytics(ctx);
-});
-
-var bearing_comms = [
-  "bearing",
-  "bearings",
-  "bearing_change",
-  "bearingchange",
-  "change_bearings",
-  "changebearings"
-];
-bot.command(bearing_comms, ctx => {
-  ctx.reply("https://www.amazon.com/dp/B01MYG7WT0/ref=cm_sw_r_cp_apa_mVdBBb5F203E4\nhttps://media.giphy.com/media/7zAgRCl0lkUSDNp6Y7/giphy.mp4");
-  analytics(ctx);
-});
-
-var charging_comms = [
-  "charging",
-  "charge",
-  "charger",
-  "charge_location",
-  "charge_locations"
-];
-bot.command(charging_comms, ctx => {
-  console.log(ctx.chat.id);
-  ctx.reply(
-    "https://www.google.com/maps/d/edit?mid=1KIzwP95pZD0A3CWmjC6lcMD29f4&usp=sharing"
-  );
-  analytics(ctx);
-});
-
-var links_comms = ["helpful_links", "links", "link", "helpfullinks"];
-bot.command(links_comms, ctx => {
-  var helmetThing = "Charging Map: https://www.google.com/maps/d/edit?mid=1KIzwP95pZD0A3CWmjC6lcMD29f4&usp=sharing\n"+
-                    "Boosted Board Riders Chicago: https://www.facebook.com/groups/BoostedCHI\n"+
-                    "Chicago E-Skate: https://www.facebook.com/groups/chicagoeskate/\n"+
-                    "Invite Link for Telegram: https://t.me/joinchat/GGTLCBDOaknv45USExpJSw\n"+
-                    "Announcement Telegram: https://t.me/joinchat/AAAAAEwbHWf-hVIT53a75Q"
-
-  ctx.reply(helmetThing);
-  analytics(ctx);
-});
-
-var helmet_comms = [
-  "helmet",
-  "helmets",
-  "helmet_recommendations",
-  "brain_bucket"
-];
-bot.command(helmet_comms, ctx => {
-  var helmetThing = 
-  "http://www.bernunlimited.com/\n"+
-  "https://www.explorethousand.com/\n"+
-  "https://www.ruroc.com/en/\n"+
-  "https://shop.boostedboards.com/products/boosted-helmet\n"+
-  "https://www.pocsports.com/us/cycling-helmets/commuter/";
-
-  ctx.reply(helmetThing);
-  analytics(ctx);
-});
-
-var belt_comms = ["belts", "belt"];
-bot.command(belt_comms, ctx => {
-  var resp = 
-    "The belts we use are 225-3M-15\n"+
-    "They can be purchased from: \n"+
-    "https://shop.boostedboards.com/products/2nd-gen-belt-kit\n"+
-    "https://www.royalsupply.com/store/pc/Gates-225-3M-15-PowerGrip-HTD-Belt-9293-0395-p18067.htm\n"+
-    "https://www.amazon.com/JVgear-Boosted-Board-Belts-Stealth/dp/B076HKPKLF/ref=sr_1_3?ie=UTF8&qid=1530303696&sr=8-3&keywords=boosted+board+belts";
-  ctx.reply(resp);
-  analytics(ctx);
-});
-
-bot.command("nosedive", ctx => {
-  ctx.reply("ayy lmao\nhttps://www.youtube.com/watch?v=kc6IEVV9mp0&t=20s");
   analytics(ctx);
 });
 
@@ -503,7 +326,7 @@ bot.command("weather", ctx => {
 
           ctx.reply(resp);
         } catch (error) {
-          ctx.reply(errorMsg);
+          ctx.reply("Error fetching weather... Try again later...");
           console.log(error);
         }
       }
