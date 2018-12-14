@@ -135,14 +135,7 @@ bot.help(ctx =>
 
 //Generic Command Section. Commands defined in basicCommands.json
 for(var i=0;i<basicCommands.length;i++) {
-  bot.command(basicCommands[i].commands, ctx => {
-    try{
-      ctx.reply(basicCommands[i].response);
-    } catch(err) {
-      ctx.reply("Error: " + err);
-    }
-    analytics(ctx);
-  })
+  bot.command(basicCommands[i].commands, Telegraf.reply(basicCommands[i].response));
 }
 
 //rank section
