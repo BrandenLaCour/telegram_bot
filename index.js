@@ -137,6 +137,7 @@ var numOptions = 0;
 var voted = [];
 
 function castVote(ctx, num) {
+  console.log(num);
   if (!voted.includes(ctx.update.callback_query.from.id)) {
     voted.push(ctx.update.callback_query.from.id);
     votes[num]++;    
@@ -168,7 +169,7 @@ bot.command("genPoll", ctx => {
 
     for(var i=0;i<numOptions;i++) {
       //id, name
-      inlineKeyboard.push(Markup.callbackButton(i,1+i));
+      inlineKeyboard.push(Markup.callbackButton(i+1,i));
       votes[i] = 0;
     }
 
