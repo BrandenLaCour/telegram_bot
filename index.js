@@ -135,6 +135,7 @@ bot.help(ctx =>
 var votes = [0,0,0,0,0,0,0,0];
 var numOptions = 0;
 var voted = [];
+var kb;
 
 function castVote(ctx, num) {
   if (!voted.includes(ctx.update.callback_query.from.id)) {
@@ -146,7 +147,7 @@ function castVote(ctx, num) {
       resp += (i+1) + " has " + votes[i] + " votes\n";
     }
 
-    ctx.editMessageText(resp); 
+    ctx.editMessageText(resp, kb); 
   }
 }
 
@@ -185,7 +186,7 @@ bot.command("poll", ctx => {
       votes[i] = 0;
     }
 
-    const kb = Markup.inlineKeyboard(inlineKeyboard).extra();
+    kb = Markup.inlineKeyboard(inlineKeyboard).extra();
 
     ctx.reply("Poll: ", kb)
 
