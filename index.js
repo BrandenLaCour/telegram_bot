@@ -226,7 +226,7 @@ bot.action("dislike", ctx => {
 //End Poll Section
 
 bot.command("genPoll", ctx => {
-  console.log(ctx);
+  console.log(ctx.update);
   // try {
   //   console.log(ctx.message);
   //   yes = 0;
