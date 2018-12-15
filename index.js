@@ -137,10 +137,16 @@ var numOptions = 0;
 var voted = [];
 
 function castVote(ctx, num) {
-  console.log(num);
   if (!voted.includes(ctx.update.callback_query.from.id)) {
     voted.push(ctx.update.callback_query.from.id);
-    votes[num]++;    
+    votes[num]++;
+
+    let resp = "";
+    for(var i=0; i< numOptions;i++) {
+      resp += (i+1) + " has " + votes[i] + " votes\n";
+    }
+
+    ctx.editMessageText(resp); 
   }
 }
 
@@ -154,10 +160,10 @@ bot.action("6", ctx => castVote(ctx,6));
 bot.action("7", ctx => castVote(ctx,7));
 
 
-bot.command("genPoll", ctx => {
+bot.command("poll", ctx => {
   var commandText = ctx.update.message.text;
   if(commandText.split(" ").length == 1) {
-    ctx.reply("Invalid arguments...");
+    ctx.reply("Invalid arguments...\nUse either '/poll <num arguments>' or '/poll results'");
     return;
   }
   if (commandText.split(" ")[1].toLowerCase() === 'results') {
@@ -187,14 +193,6 @@ bot.command("genPoll", ctx => {
     ctx.reply(errorMsg);
   }
 
-
-  // try {
-  //   console.log(ctx.message);
-  //   yes = 0;
-  //   no = 0;
-  //   voted = [];
-  //   ctx.telegram.sendMessage(GROUP_ID, "Poll:", pollInline);
-  // } catch (error) {}
 });
 
 
