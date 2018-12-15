@@ -240,6 +240,7 @@ bot.command("genPoll", ctx => {
     var inlineKeyboard = [];
 
     for(var i=0;i<numOptions;i++) {
+      //id, name
       inlineKeyboard.push(Markup.callbackButton(i,i));
     }
 
@@ -250,9 +251,6 @@ bot.command("genPoll", ctx => {
   } else {
     ctx.reply(errorMsg);
   }
-
-
-  ctx.reply("Poll:", pollInline);
 
 
   // try {
