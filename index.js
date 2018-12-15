@@ -35,6 +35,10 @@ const bot = new Telegraf(BOT_TOKEN, { username: "ChiSk8_bot" });
 const errorMsg =
   "There was an error. Try again later. \n@jacob_waller Look at logs pls";
 
+//Generic Command Section. Commands defined in basicCommands.json
+for(var i=0;i<basicCommands.length;i++) {
+  bot.command(basicCommands[i].commands, Telegraf.reply(basicCommands[i].response));
+}
 
 //Says
 //Good morning
@@ -49,7 +53,7 @@ function dailyMessage() {
     `https://api.darksky.net/forecast/${DARKSKY_TOKEN}/41.8781,-87.6298`,
     function(err, response, body) {
       if (err) {
-        console.log("Oops");
+        console.log(errorMsg);
       } else {
         try {
           let con = JSON.parse(body);
@@ -105,18 +109,13 @@ var s = schedule.scheduleJob("0 11 * * *", () => {
   dailyMessage();
 });
 
-//Analytics
-function analytics(ctx) {
-  fs.appendFileSync('log.txt', ctx.message.text.toString()+"\n");
-}
-
 bot.start(ctx => {
-  ctx.reply(
-    "Hi! I'm the Chicago E-Skate bot! I can give you weather information, helmet recommendations, and helpful links! Type /help for a list of available commands."
-  );
-  //fs.appendFileSync('log.txt', 'start');
+    ctx.reply(
+      "Hi! I'm the Chicago E-Skate bot! I can give you weather information, helmet recommendations, and helpful links! Type /help for a list of available commands."
+    );
   }
 );
+
 bot.help(ctx =>
   ctx.reply(
     "Hi! I\'m here to answer some questions. If you want to add a feature, DM @jacob_waller. Also, be advised I am in the Pre-est of Alphas. Things may not work correctly\n\n"+
@@ -132,11 +131,6 @@ bot.help(ctx =>
     "Version: 0.8"
   )
 );
-
-//Generic Command Section. Commands defined in basicCommands.json
-for(var i=0;i<basicCommands.length;i++) {
-  bot.command(basicCommands[i].commands, Telegraf.reply(basicCommands[i].response));
-}
 
 //rank section
 var a = 0,
@@ -160,13 +154,13 @@ bot.command("rank", ctx => {
     votedRank = [];
     ctx.telegram.sendMessage(GROUP_ID, "Poll:", rankInline);
   } catch (error) {}
-  analytics(ctx);
+  
 });
 bot.command("rankresults", ctx => {
   ctx.reply(
     "Here are the results:\nA: " + a + " B: " + b + "\nC: " + c + " D: " + d
   );
-  analytics(ctx);
+  
 });
 
 bot.action("A", ctx => {
@@ -211,11 +205,11 @@ bot.command("poll", ctx => {
     voted = [];
     ctx.telegram.sendMessage(GROUP_ID, "Poll:", pollInline);
   } catch (error) {}
-  analytics(ctx);
+  
 });
 bot.command("pollresults", ctx => {
   ctx.reply("Here are the results:\nA: " + yes + " B: " + no);
-  analytics(ctx);
+  
 });
 bot.action("like", ctx => {
   if (!voted.includes(ctx.update.callback_query.from.id)) {
@@ -231,11 +225,23 @@ bot.action("dislike", ctx => {
 });
 //End Poll Section
 
+bot.command("genPoll", ctx => {
+  console.log(ctx);
+  // try {
+  //   console.log(ctx.message);
+  //   yes = 0;
+  //   no = 0;
+  //   voted = [];
+  //   ctx.telegram.sendMessage(GROUP_ID, "Poll:", pollInline);
+  // } catch (error) {}
+});
+
+
 bot.command(SECRET_COMMAND, ctx => {
 	console.log(ctx.message.text);
 	ctx.reply(ctx.message.text.toString().substring(6));
   ctx.telegram.sendMessage(GROUP_ID,ctx.message.text.toString().substring(6));
-  analytics(ctx);
+  
 });
 
 bot.on("new_chat_members", ctx => {
@@ -275,91 +281,7 @@ bot.command(group_ride_comms, ctx => {
       }
     );
   });
-  analytics(ctx);
-});
-
-bot.command("weather", ctx => {
-  //Get current weather
-  request(
-    `http://api.openweathermap.org/data/2.5/weather?q=Chicago,US&APPID=${OPENWEATHER_TOKEN}&units=imperial`,
-    function(err, response, body) {
-      if (err) {
-        ctx.reply(
-          "Wow, there must have been an error... I can't get the weather information. oof @jacob_waller pls help..."
-        );
-      } else {
-        try {
-          let con = JSON.parse(body);
-          var condition = con.weather[0].description;
-
-          var isRaining = false;
-          var isClear = false;
-
-          for (var i = 0; i < con.weather.length; i++) {
-            var id = con.weather[i].id;
-            if ((id >= 200 && id <= 399) || (id >= 500 && id <= 699)) {
-              isRaining = true;
-            }
-            if (id == 800) {
-              isClear = true;
-            }
-          }
-
-          var temp = con.main.temp;
-          var resp =
-            "It is " +
-            temp +
-            " degrees F. Currently the condition is labeled as: " +
-            condition +
-            ". ";
-
-          if (isRaining) {
-            resp += "It is raining and we are all sad because of it.";
-          }
-
-          if (isClear && !isRaining) {
-            resp += "It's clear! Get out there and ride ðŸ¤™";
-          }
-
-          ctx.reply(resp);
-        } catch (error) {
-          ctx.reply("Error fetching weather... Try again later...");
-          console.log(error);
-        }
-      }
-    }
-  );
-  analytics(ctx);
-});
-
-bot.command("forecast", ctx => {
-  //Get weather for the week
-  request(
-    `https://api.darksky.net/forecast/${DARKSKY_TOKEN}/41.8781,-87.6298`,
-    function(err, response, body) {
-      if (err) {
-        ctx.reply(
-          "Wow, there must have been an error... I can't get the weather information. oof @jacob_waller, pls help me"
-        );
-      } else {
-        try {
-          let con = JSON.parse(body);
-
-          var shortTerm = con.minutely.summary;
-
-          var thisWeek = con.daily.summary;
-
-          var resp = "" + shortTerm + " \n\n**This Week**\n" + thisWeek;
-
-          ctx.reply(resp);
-        } catch (error) {
-          console.log(error);
-          ctx.reply(errorMsg);
-        }
-      }
-    }
-  );
-  analytics(ctx);
+  
 });
 
 bot.startPolling();
