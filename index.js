@@ -179,7 +179,8 @@ bot.command("poll", ctx => {
     //Make poll
     numOptions = parseInt(commandText.split(" ")[1]);
     let inlineKeyboard = [];
-
+    voted = [];
+    
     for(var i=0;i<numOptions;i++) {
       //id, name
       inlineKeyboard.push(Markup.callbackButton(i+1,i));
@@ -188,7 +189,12 @@ bot.command("poll", ctx => {
 
     kb = Markup.inlineKeyboard(inlineKeyboard).extra();
 
-    ctx.reply("Poll: ", kb)
+    let resp = "";
+    for(var i=0; i< numOptions;i++) {
+      resp += (i+1) + " has " + votes[i] + " votes\n";
+    }
+
+    ctx.reply(resp, kb)
 
   } else {
     ctx.reply(errorMsg);
