@@ -241,7 +241,7 @@ bot.command("genPoll", ctx => {
 
     for(var i=0;i<numOptions;i++) {
       //id, name
-      inlineKeyboard.push(Markup.callbackButton(i,i));
+      inlineKeyboard.push(Markup.callbackButton(i,'A'+i));
     }
 
     const kb = Markup.inlineKeyboard(inlineKeyboard).extra();
