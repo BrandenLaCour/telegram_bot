@@ -228,6 +228,7 @@ bot.action("dislike", ctx => {
 bot.command("genPoll", ctx => {
   console.log(ctx.getChat);
   var commandText = ctx.update.message.text;
+  ctx.reply("Poll:", pollInline);
 
 
   // try {
