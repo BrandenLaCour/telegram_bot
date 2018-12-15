@@ -226,7 +226,10 @@ bot.action("dislike", ctx => {
 //End Poll Section
 
 bot.command("genPoll", ctx => {
-  console.log(ctx.update);
+  console.log(ctx);
+  var commandText = ctx.update.message.text;
+
+
   // try {
   //   console.log(ctx.message);
   //   yes = 0;
