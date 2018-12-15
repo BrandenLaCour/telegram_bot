@@ -239,7 +239,7 @@ bot.command("genPoll", ctx => {
 
     var inlineKeyboard = [];
 
-    for(var i='A';i<'A'+numOptions;i++) {
+    for(var i=0;i<numOptions;i++) {
       inlineKeyboard.push(Markup.callbackButton(i,i));
     }
 
