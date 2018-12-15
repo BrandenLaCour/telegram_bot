@@ -138,7 +138,7 @@ var voted = [];
 var kb;
 
 function castVote(ctx, num) {
-  if (true || !voted.includes(ctx.update.callback_query.from.id)) {
+  if (!voted.includes(ctx.update.callback_query.from.id)) {
     voted.push(ctx.update.callback_query.from.id);
     votes[num]++;
 
@@ -180,7 +180,7 @@ bot.command("poll", ctx => {
     numOptions = parseInt(commandText.split(" ")[1]);
     let inlineKeyboard = [];
     voted = [];
-    
+
     for(var i=0;i<numOptions;i++) {
       //id, name
       inlineKeyboard.push(Markup.callbackButton(i+1,i));
