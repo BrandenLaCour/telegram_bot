@@ -229,6 +229,7 @@ bot.command("genPoll", ctx => {
   var commandText = ctx.update.message.text;
   if(commandText.split(" ").length == 1) {
     ctx.reply("Invalid arguments...");
+    return;
   }
   if (commandText.split(" ")[1].toLower() === 'results') {
     //Print Results
