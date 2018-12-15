@@ -231,7 +231,7 @@ bot.command("genPoll", ctx => {
     ctx.reply("Invalid arguments...");
     return;
   }
-  if (commandText.split(" ")[1].toLower() === 'results') {
+  if (commandText.split(" ")[1].toLowerCase() === 'results') {
     //Print Results
   } else if(!isNaN(commandText.split(" ")[1])) {
     //Make poll
