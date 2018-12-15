@@ -226,8 +226,29 @@ bot.action("dislike", ctx => {
 //End Poll Section
 
 bot.command("genPoll", ctx => {
-  console.log(ctx.getChat);
   var commandText = ctx.update.message.text;
+
+  if (commandText.split(" ")[1].toLower() === 'results') {
+    //Print Results
+  } else if(!isNaN(commandText.split(" ")[1])) {
+    //Make poll
+    var numOptions = parseInt(commandText.split(" ")[1]);
+
+    var inlineKeyboard = [];
+
+    for(var i='A';i<'A'+numOptions;i++) {
+      inlineKeyboard.push(Markup.callbackButton(i,i));
+    }
+
+    var kb = Markup.inlineKeyboard(inlineKeyboard);
+
+    ctx.reply("Poll: ", kb)
+
+  } else {
+    ctx.reply(errorMsg);
+  }
+
+
   ctx.reply("Poll:", pollInline);
 
 
