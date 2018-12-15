@@ -132,98 +132,26 @@ bot.help(ctx =>
   )
 );
 
-//rank section
-var a = 0,
-  b = 0,
-  c = 0,
-  d = 0;
-var votedRank = [];
-const rankInline = Markup.inlineKeyboard([
-  Markup.callbackButton("A", "A"),
-  Markup.callbackButton("B", "B"),
-  Markup.callbackButton("C", "C"),
-  Markup.callbackButton("D", "D")
-]).extra();
-
-bot.command("rank", ctx => {
-  try {
-    a = 0;
-    b = 0;
-    c = 0;
-    d = 0;
-    votedRank = [];
-    ctx.telegram.sendMessage(GROUP_ID, "Poll:", rankInline);
-  } catch (error) {}
-  
-});
-bot.command("rankresults", ctx => {
-  ctx.reply(
-    "Here are the results:\nA: " + a + " B: " + b + "\nC: " + c + " D: " + d
-  );
-  
-});
-
-bot.action("A", ctx => {
-  if (!votedRank.includes(ctx.update.callback_query.from.id)) {
-    votedRank.push(ctx.update.callback_query.from.id);
-    a++;
-  }
-});
-bot.action("B", ctx => {
-  if (!votedRank.includes(ctx.update.callback_query.from.id)) {
-    votedRank.push(ctx.update.callback_query.from.id);
-    b++;
-  }
-});
-bot.action("C", ctx => {
-  if (!votedRank.includes(ctx.update.callback_query.from.id)) {
-    votedRank.push(ctx.update.callback_query.from.id);
-    c++;
-  }
-});
-bot.action("D", ctx => {
-  if (!votedRank.includes(ctx.update.callback_query.from.id)) {
-    votedRank.push(ctx.update.callback_query.from.id);
-    d++;
-  }
-});
-//end rank section
-
-//Poll section
-var yes = 0;
-var no = 0;
+var votes = [0,0,0,0,0,0,0,0];
+var numOptions = 0;
 var voted = [];
-const pollInline = Markup.inlineKeyboard([
-  Markup.callbackButton("A", "like"),
-  Markup.callbackButton("B", "dislike")
-]).extra();
-bot.command("poll", ctx => {
-  try {
-    console.log(ctx.message);
-    yes = 0;
-    no = 0;
-    voted = [];
-    ctx.telegram.sendMessage(GROUP_ID, "Poll:", pollInline);
-  } catch (error) {}
-  
-});
-bot.command("pollresults", ctx => {
-  ctx.reply("Here are the results:\nA: " + yes + " B: " + no);
-  
-});
-bot.action("like", ctx => {
+
+function castVote(ctx, num) {
   if (!voted.includes(ctx.update.callback_query.from.id)) {
     voted.push(ctx.update.callback_query.from.id);
-    yes++;
+    votes[num]++;    
   }
-});
-bot.action("dislike", ctx => {
-  if (!voted.includes(ctx.update.callback_query.from.id)) {
-    voted.push(ctx.update.callback_query.from.id);
-    no++;
-  }
-});
-//End Poll Section
+}
+
+bot.action("0", ctx => castVote(ctx,0));
+bot.action("1", ctx => castVote(ctx,1));
+bot.action("2", ctx => castVote(ctx,2));
+bot.action("3", ctx => castVote(ctx,3));
+bot.action("4", ctx => castVote(ctx,4));
+bot.action("5", ctx => castVote(ctx,5));
+bot.action("6", ctx => castVote(ctx,6));
+bot.action("7", ctx => castVote(ctx,7));
+
 
 bot.command("genPoll", ctx => {
   var commandText = ctx.update.message.text;
@@ -235,13 +163,13 @@ bot.command("genPoll", ctx => {
     //Print Results
   } else if(!isNaN(commandText.split(" ")[1])) {
     //Make poll
-    var numOptions = parseInt(commandText.split(" ")[1]);
-
+    numOptions = parseInt(commandText.split(" ")[1]);
     let inlineKeyboard = [];
 
     for(var i=0;i<numOptions;i++) {
       //id, name
-      inlineKeyboard.push(Markup.callbackButton(i,'A'+i));
+      inlineKeyboard.push(Markup.callbackButton(i,1+i));
+      votes[i] = 0;
     }
 
     const kb = Markup.inlineKeyboard(inlineKeyboard).extra();
