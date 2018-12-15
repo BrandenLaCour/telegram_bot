@@ -237,14 +237,14 @@ bot.command("genPoll", ctx => {
     //Make poll
     var numOptions = parseInt(commandText.split(" ")[1]);
 
-    var inlineKeyboard = [];
+    let inlineKeyboard = [];
 
     for(var i=0;i<numOptions;i++) {
       //id, name
       inlineKeyboard.push(Markup.callbackButton(i,i));
     }
 
-    var kb = Markup.inlineKeyboard(inlineKeyboard);
+    const kb = Markup.inlineKeyboard(inlineKeyboard);
 
     ctx.reply("Poll: ", kb)
 
