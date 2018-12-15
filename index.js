@@ -162,6 +162,12 @@ bot.command("genPoll", ctx => {
   }
   if (commandText.split(" ")[1].toLowerCase() === 'results') {
     //Print Results
+    let resp = "";
+    for(var i=0; i< numOptions;i++) {
+      resp += (i+1) + " got " + votes[i] + " votes\n";
+    }
+    ctx.reply(resp);
+
   } else if(!isNaN(commandText.split(" ")[1])) {
     //Make poll
     numOptions = parseInt(commandText.split(" ")[1]);
